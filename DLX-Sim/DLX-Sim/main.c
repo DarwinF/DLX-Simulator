@@ -1,11 +1,5 @@
 #include "state_machine.h"
 
-typedef struct
-{
-	const int i;
-	int j;
-}test;
-
 int main(void)
 {
 	StateMachine *sm = CreateStateMachine();

@@ -1,7 +1,7 @@
 #ifndef dlx_register_file_handler_h_
 #define dlx_register_file_handler_h_
 
-typedef unsigned int uint;
+#include "dlx_sim.h"
 
 // General Purpose
 typedef struct

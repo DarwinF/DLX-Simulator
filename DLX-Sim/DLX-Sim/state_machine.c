@@ -11,7 +11,6 @@ StateMachine* CreateStateMachine()
 	
 	sm->status = SM_NOT_INITIALZED;
 	sm->error = SM_NO_ERROR;
-	sm->current_state = NULL;
 	sm->registers = NULL;
 
 	ret_status = InitializeStateMachine(sm);
@@ -28,6 +27,10 @@ StateMachine* CreateStateMachine()
 int InitializeStateMachine(StateMachine *sm)
 {
 	// Setup Current State
+	State *current_state = (State *)malloc(sizeof(State));
+	current_state->current_stage = InstructionFetch;
+	current_state->instruction = 0;
+
 	// Setup Registers
 
 	// On success
