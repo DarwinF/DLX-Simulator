@@ -4,7 +4,7 @@ int main(void)
 {
 	StateMachine *sm = CreateStateMachine();
 
-	if (SM_NO_ERROR != sm->error)
+	if (SM_SUCCESS != sm->error)
 	{
 		// TODO: Add logging
 		DestroyStateMachine(sm);

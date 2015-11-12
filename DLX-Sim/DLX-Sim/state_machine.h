@@ -6,10 +6,6 @@
 #include "state_handler.h"
 #include "register_file_handler.h"
 
-// Constants
-#define SM_NOT_INITIALZED	0
-#define SM_INITIALIZED		1
-
 typedef struct
 {
 	int status;
@@ -17,11 +13,14 @@ typedef struct
 
 	// Registers
 	Registers *registers;
+
+  // States
+  State *state;
 }StateMachine;
 
 // Function Declerations
 StateMachine* CreateStateMachine();
-void DestroyStateMachine(StateMachine *);
+int DestroyStateMachine(StateMachine *);
 void RunStateMachine(StateMachine *);
 
 #endif

@@ -2,6 +2,7 @@
 #define dlx_state_handler_h_
 
 #include "dlx_sim.h"
+#include "instruction_handler.h"
 
 typedef enum
 {
@@ -14,7 +15,7 @@ typedef enum
 
 typedef struct
 {
-	uint
+	uint32_t
 		zeros : 6,
 		rs1 : 5,
 		rs2 : 5,
@@ -25,7 +26,7 @@ typedef struct
 
 typedef struct
 {
-	uint
+	uint32_t
 		opcode : 6,
 		rs1 : 5,
 		rd : 5,
@@ -34,7 +35,7 @@ typedef struct
 
 typedef struct
 {
-	uint
+	uint32_t
 		opcode : 6,
 		value : 26;
 }JTypeInstruction;
@@ -52,14 +53,20 @@ typedef struct
 	Stages current_stage;
 
 	// Instruction
-	uint instruction;
+	uint32_t instruction;
 
 	// Opcode, Parameters
 	Instruction formatted_instruction;
 
 	// Function
+  InstructionFunc function;
+
 	// Result: register value, loaded/to store data
 	// List of registers (?)
 }State;
+
+// Function Declerations
+State* CreateState();
+int DestroyState(State *);
 
 #endif

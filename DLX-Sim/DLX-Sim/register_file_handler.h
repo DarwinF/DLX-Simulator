@@ -3,22 +3,23 @@
 
 #include "dlx_sim.h"
 
+#define r0 0
+
 // General Purpose
 typedef struct
 {
-	const uint r0;
-	uint r1;
-	uint r2;
-	uint r3;
+	uint32_t r1;
+	uint32_t r2;
+	uint32_t r3;
 }GPRegisters;
 
 // Floating Point
 typedef struct
 {
-	uint f0;
-	uint f1;
-	uint f2;
-	uint f3;
+	uint32_t f0;
+	uint32_t f1;
+	uint32_t f2;
+	uint32_t f3;
 }FPRegisters;
 
 typedef struct
@@ -28,5 +29,9 @@ typedef struct
 	// 32 Floating Point Registers
 	FPRegisters *fprs;
 }Registers;
+
+// Function Declerations
+Registers* CreateRegisters();
+int DestroyRegisters(Registers *);
 
 #endif

@@ -23,15 +23,14 @@
 //		J-Type:		JUMP	8
 //		J-Type:		000010 11111111111111111111111000
 // 
-//		Extend() - Immediate values are padded by left-most bit
-//				 - Otherwise, pad left with 0
+//		Extend()  - Immediate values are padded by left-most bit
+//				      - Otherwise, pad left with 0
 /*************************************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "errors.h"
-
-typedef unsigned int uint;
 
 #endif

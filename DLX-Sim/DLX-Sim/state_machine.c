@@ -6,48 +6,59 @@ int InitializeStateMachine(StateMachine *);
 
 StateMachine* CreateStateMachine()
 {
-	int ret_status = SM_GENERAL_INIT_ERROR;
+	int status = SM_GENERAL_INIT_ERROR;
 	StateMachine *sm = (StateMachine *)malloc(sizeof(StateMachine));
 	
-	sm->status = SM_NOT_INITIALZED;
-	sm->error = SM_NO_ERROR;
-	sm->registers = NULL;
+  if (sm == NULL)
+    status = SM_NO_MEMORY_ERROR;
+  else
+    status = InitializeStateMachine(sm);
 
-	ret_status = InitializeStateMachine(sm);
-
-	if (0 > ret_status)
+	if (0 > status)
 	{
 		// TODO: Add Logging
-		sm->error = ret_status;
+		sm->error = status;
 	}
+  else
+  {
+    sm->error = SM_SUCCESS;
+  }
 
 	return sm;
 }
 
 int InitializeStateMachine(StateMachine *sm)
 {
+  int status = SM_SUCCESS;
 	// Setup Current State
-	State *current_state = (State *)malloc(sizeof(State));
-	current_state->current_stage = InstructionFetch;
-	current_state->instruction = 0;
-
+  State *current_state = CreateState();
 	// Setup Registers
+  Registers *current_registers = CreateRegisters();
 
-	// On success
-	sm->status = SM_INITIALIZED;
+  if (current_state == NULL || current_registers == NULL)
+    status = SM_GENERAL_INIT_ERROR;
+  else
+  {
+    sm->registers = current_registers;
+    sm->state = current_state;
+  }
 
-	return SM_INITIALIZED;
+	return status;
 }
 
-void DestroyStateMachine(StateMachine *sm)
+int DestroyStateMachine(StateMachine *sm)
 {
 	// Cleanup State
+  DestroyState(sm->state);
 	// Cleanup Registers
+  DestroyRegisters(sm->registers);
 
 	free(sm);
+
+  return SM_SUCCESS;
 }
 
 void RunStateMachine(StateMachine *sm)
 {
-	
+
 }
