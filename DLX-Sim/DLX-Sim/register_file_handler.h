@@ -8,18 +8,18 @@
 // General Purpose
 typedef struct
 {
-	uint32_t r1;
-	uint32_t r2;
-	uint32_t r3;
+	WORD r1;
+	WORD r2;
+	WORD r3;
 }GPRegisters;
 
 // Floating Point
 typedef struct
 {
-	uint32_t f0;
-	uint32_t f1;
-	uint32_t f2;
-	uint32_t f3;
+	WORD f0;
+	WORD f1;
+	WORD f2;
+	WORD f3;
 }FPRegisters;
 
 typedef struct

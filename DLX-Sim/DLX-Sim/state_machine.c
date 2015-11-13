@@ -2,7 +2,10 @@
 
 #include "state_machine.h"
 
+// Function Declerations
 int InitializeStateMachine(StateMachine *);
+
+
 
 StateMachine* CreateStateMachine()
 {
@@ -60,5 +63,17 @@ int DestroyStateMachine(StateMachine *sm)
 
 void RunStateMachine(StateMachine *sm)
 {
+  // Setup
+  DWORD cycle_counter = 0;
 
+  // Loop
+  while (cycle_counter < 1000000) // Temporary
+  {
+    ProcessState(sm->state);
+
+    cycle_counter++;
+  }
+
+  // Cleanup
+  DestroyStateMachine(sm);
 }

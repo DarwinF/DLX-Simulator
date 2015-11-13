@@ -4,11 +4,11 @@
 /*************************************************************************************************/
 // Instruction Format
 // 
-// R-Type								I-Type								J-Type
-//	Bits								 Bits								 Bits
-//		31-26	0x0							31-26	Opcode						31-26	Opcode
-//		25-21	Register Source 1			25-21	Register Source 1			25-0	Value
-//		20-16	Register Source 2			20-16	Register Destination
+// R-Type								        I-Type								            J-Type
+//	Bits								         Bits								                Bits
+//		31-26	0x0							        31-26	Opcode						          31-26	Opcode
+//		25-21	Register Source 1			  25-21	Register Source 1			      25-0	Value
+//		20-16	Register Source 2			  20-16	Register Destination
 //		15-11	Register Destination		15-0	Immediate Value
 //		10-6	Unused
 //		5-0		Opcode
@@ -25,6 +25,7 @@
 // 
 //		Extend()  - Immediate values are padded by left-most bit
 //				      - Otherwise, pad left with 0
+//
 /*************************************************************************************************/
 
 #include <stdlib.h>
@@ -32,5 +33,9 @@
 #include <stdint.h>
 
 #include "errors.h"
+
+typedef uint16_t HWORD;
+typedef uint32_t  WORD;
+typedef uint64_t DWORD;
 
 #endif

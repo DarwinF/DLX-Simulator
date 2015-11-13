@@ -2,6 +2,6 @@
 #define dlx_instruction_handler_h_
 
 // Function Pointer for Instructions
-typedef void(*InstructionFunc)(void *);
+typedef void(*InstructionFunc)(WORD);
 
 #endif

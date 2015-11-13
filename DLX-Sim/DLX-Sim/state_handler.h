@@ -6,46 +6,12 @@
 
 typedef enum
 {
-	InstructionFetch,
-	InstructionDecode,
-	InstructionExecute,
-	MemoryAccess,
-	WriteBack
+	INSTRUCTION_FETCH,
+	INSTRUCTION_DECODE,
+	INSTRUCTION_EXECUTE,
+	MEMORY_ACCESS,
+	WRITE_BACK
 }Stages;
-
-typedef struct
-{
-	uint32_t
-		zeros : 6,
-		rs1 : 5,
-		rs2 : 5,
-		rd : 5,
-		unused : 5,
-		opcode : 6;
-}RTypeInstruction;
-
-typedef struct
-{
-	uint32_t
-		opcode : 6,
-		rs1 : 5,
-		rd : 5,
-		immediate : 16;
-}ITypeInstruction;
-
-typedef struct
-{
-	uint32_t
-		opcode : 6,
-		value : 26;
-}JTypeInstruction;
-
-typedef union
-{
-	RTypeInstruction r_instruction;
-	ITypeInstruction i_instruction;
-	JTypeInstruction j_instruction;
-}Instruction;
 
 typedef struct
 {
@@ -53,10 +19,8 @@ typedef struct
 	Stages current_stage;
 
 	// Instruction
-	uint32_t instruction;
-
-	// Opcode, Parameters
-	Instruction formatted_instruction;
+	WORD instruction;
+  WORD data;
 
 	// Function
   InstructionFunc function;
@@ -68,5 +32,6 @@ typedef struct
 // Function Declerations
 State* CreateState();
 int DestroyState(State *);
+void ProcessState(State *);
 
 #endif
