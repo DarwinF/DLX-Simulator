@@ -35,7 +35,7 @@
 #include "errors.h"
 
 typedef uint16_t HWORD;
-typedef uint32_t  WORD;
+typedef uint32_t WORD;
 typedef uint64_t DWORD;
 
 #endif

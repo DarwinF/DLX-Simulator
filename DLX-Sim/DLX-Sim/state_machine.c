@@ -3,40 +3,39 @@
 #include "state_machine.h"
 
 // Function Declerations
-int InitializeStateMachine(StateMachine *);
-
+int InitializeStateMachine(StateMachine*);
 
 
 StateMachine* CreateStateMachine()
 {
-	int status = SM_GENERAL_INIT_ERROR;
-	StateMachine *sm = (StateMachine *)malloc(sizeof(StateMachine));
-	
+  int status = SM_GENERAL_INIT_ERROR;
+  StateMachine* sm = (StateMachine *)malloc(sizeof(StateMachine));
+
   if (sm == NULL)
     status = SM_NO_MEMORY_ERROR;
   else
     status = InitializeStateMachine(sm);
 
-	if (0 > status)
-	{
-		// TODO: Add Logging
-		sm->error = status;
-	}
+  if (0 > status)
+  {
+    // TODO: Add Logging
+    sm->error = status;
+  }
   else
   {
     sm->error = SM_SUCCESS;
   }
 
-	return sm;
+  return sm;
 }
 
-int InitializeStateMachine(StateMachine *sm)
+int InitializeStateMachine(StateMachine* sm)
 {
   int status = SM_SUCCESS;
-	// Setup Current State
-  State *current_state = CreateState();
-	// Setup Registers
-  Registers *current_registers = CreateRegisters();
+  // Setup Current State
+  State* current_state = CreateState();
+  // Setup Registers
+  Registers* current_registers = CreateRegisters();
 
   if (current_state == NULL || current_registers == NULL)
     status = SM_GENERAL_INIT_ERROR;
@@ -46,22 +45,22 @@ int InitializeStateMachine(StateMachine *sm)
     sm->state = current_state;
   }
 
-	return status;
+  return status;
 }
 
-int DestroyStateMachine(StateMachine *sm)
+int DestroyStateMachine(StateMachine* sm)
 {
-	// Cleanup State
+  // Cleanup State
   DestroyState(sm->state);
-	// Cleanup Registers
+  // Cleanup Registers
   DestroyRegisters(sm->registers);
 
-	free(sm);
+  free(sm);
 
   return SM_SUCCESS;
 }
 
-void RunStateMachine(StateMachine *sm)
+void RunStateMachine(StateMachine* sm)
 {
   // Setup
   DWORD cycle_counter = 0;
