@@ -10,13 +10,16 @@ Registers* CreateRegisters()
   Registers *r = (Registers*)malloc(sizeof(Registers));
 
   if (r == NULL)
+  {
+    logger->error("Unable to allocate memory for the registers.\n");
     status = REG_NO_MEMORY_ERROR;
+  }
   else
     status = InitializeRegisters(r);
 
   if (status < 0)
   {
-    // TODO: Add logging
+    logger->error("Registers could not be initialized. Freeing the memory allocated for the registers.\n");
     DestroyRegisters(r);
   }
 
@@ -32,8 +35,10 @@ int InitializeRegisters(Registers *r)
   FPRegisters *fp = (FPRegisters *)malloc(sizeof(FPRegisters));
 
   if (gp == NULL || fp == NULL)
-    // TODO: Add logging
+  {
+    logger->error("Unable to allocate memory for the general purpose or floating point registers.\n");
     status = REG_NO_MEMORY_ERROR;
+  }
   else
   {
     r->gprs = gp;

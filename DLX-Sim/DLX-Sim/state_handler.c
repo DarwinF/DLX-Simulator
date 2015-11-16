@@ -24,13 +24,16 @@ State* CreateState()
   State *s = (State *)malloc(sizeof(State));
   
   if (s == NULL)
+  {
+    logger->error("Unable to allocate memory for the state.\n");
     status = STATE_NO_MEMORY_ERROR;
+  }
   else
     status = InitializeState(s);
 
   if (status < 0)
   {
-    // TODO: Add logging
+    logger->error("Unable to initialize the state. Freeing the memory allocated for the state.\n");
     DestroyState(s);
   }
 

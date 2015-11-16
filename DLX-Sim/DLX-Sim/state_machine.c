@@ -12,13 +12,16 @@ StateMachine* CreateStateMachine()
   StateMachine* sm = (StateMachine *)malloc(sizeof(StateMachine));
 
   if (sm == NULL)
+  {
+    logger->error("Unable to allocate memory for the state machine.\n");
     status = SM_NO_MEMORY_ERROR;
+  }
   else
     status = InitializeStateMachine(sm);
 
   if (0 > status)
   {
-    // TODO: Add Logging
+    logger->error("Unable to initialize the state machine. Freeing memory allocated for the state machine.\n");
     sm->error = status;
   }
   else

@@ -31,8 +31,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <assert.h>
 
 #include "errors.h"
+#include "logger.h"
 
 typedef uint16_t HWORD;
 typedef uint32_t WORD;
