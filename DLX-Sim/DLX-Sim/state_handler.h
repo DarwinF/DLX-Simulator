@@ -25,6 +25,9 @@ typedef struct
 	// Function
   InstructionFunc function;
 
+  // Return Value
+  WORD return_value;
+
 	// Result: register value, loaded/to store data
 	// List of registers (?)
 }State;

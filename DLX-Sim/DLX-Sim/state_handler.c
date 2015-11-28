@@ -14,9 +14,9 @@ int InitializeState(State *);
 WORD Fetch();
 HWORD DecodeOpcode(WORD);
 WORD DecodeData(WORD);
-void Execute(InstructionFunc, WORD);
+WORD Execute(InstructionFunc, WORD);
 void AccessMemory();
-void WriteBack();
+void WriteBack(WORD);
 
 State* CreateState()
 {
@@ -64,12 +64,12 @@ void ProcessState(State *s)
     s->current_stage = INSTRUCTION_DECODE;
     break;
   case INSTRUCTION_DECODE:
-    s->function = DecodeOpcode(s->instruction); // jumptable[DecodeOpcode]
+    s->function = instruction_table[DecodeOpcode(s->instruction)];
     s->data = DecodeData(s->instruction);
     s->current_stage = INSTRUCTION_EXECUTE;
     break;
   case INSTRUCTION_EXECUTE:
-    Execute(s->function, s->data);
+    s->return_value = Execute(s->function, s->data);
     s->current_stage = MEMORY_ACCESS;
     break;
   case MEMORY_ACCESS:
@@ -77,7 +77,7 @@ void ProcessState(State *s)
     s->current_stage = WRITE_BACK;
     break;
   case WRITE_BACK:
-    WriteBack();
+    WriteBack(s->return_value);
     s->current_stage = INSTRUCTION_FETCH;
     break;
   }
@@ -86,6 +86,8 @@ void ProcessState(State *s)
 WORD Fetch()
 {
   // ADD r1,r2,r3 (rd, rs1, rs2)
+  registers->gpr[2] = 10;
+  registers->gpr[3] = 11;
   WORD instruction = 0b00000000010000110000100000100000;
 
   return instruction;
@@ -114,9 +116,9 @@ WORD DecodeData(WORD instruction)
   return (instruction & DATA_MASK);
 }
 
-void Execute(InstructionFunc func, WORD data)
+WORD Execute(InstructionFunc func, WORD data)
 {
-  // func(data);
+  return func(data);
 }
 
 void AccessMemory()
@@ -124,7 +126,7 @@ void AccessMemory()
   
 }
 
-void WriteBack()
+void WriteBack(WORD value)
 {
   
 }

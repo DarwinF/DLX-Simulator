@@ -5,6 +5,7 @@
 // Function Declerations
 int InitializeStateMachine(StateMachine*);
 
+Registers *registers;
 
 StateMachine* CreateStateMachine()
 {
@@ -44,7 +45,7 @@ int InitializeStateMachine(StateMachine* sm)
     status = SM_GENERAL_INIT_ERROR;
   else
   {
-    sm->registers = current_registers;
+    registers = current_registers;
     sm->state = current_state;
   }
 
@@ -56,7 +57,7 @@ int DestroyStateMachine(StateMachine* sm)
   // Cleanup State
   DestroyState(sm->state);
   // Cleanup Registers
-  DestroyRegisters(sm->registers);
+  DestroyRegisters(registers);
 
   free(sm);
 

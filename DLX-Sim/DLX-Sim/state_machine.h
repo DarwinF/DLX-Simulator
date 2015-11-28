@@ -11,9 +11,6 @@ typedef struct
 	int status;
 	int error;
 
-	// Registers
-	Registers *registers;
-
   // States
   State *state;
 }StateMachine;
