@@ -16,6 +16,7 @@ typedef struct
   Logging info;
   Logging warn;
   Logging error;
+  Logging dump_registers;
 }Logger;
 
 // Logger object

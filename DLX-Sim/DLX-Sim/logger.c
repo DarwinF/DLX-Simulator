@@ -1,4 +1,5 @@
 #include "logger.h"
+#include "register_file_handler.h"
 
 // Function Decleration
 int InitializeLogger(char*, Logger*);
@@ -6,6 +7,7 @@ void Debug(char *);
 void Info(char *);
 void Warning(char *);
 void Error(char *);
+void DumpRegisters(char *);
 
 Logger *logger;
 
@@ -59,6 +61,7 @@ int InitializeLogger(char *file_path, Logger* l)
     l->info = Info;
     l->warn = Warning;
     l->error = Error;
+    l->dump_registers = DumpRegisters;
 
     // Set debugging
 #if DNDEBUG
@@ -110,5 +113,13 @@ void Error(char *msg)
 {
   FILE *f = fopen(logger->file_path, "a");
   fprintf(f, "[ERROR] :: %s", msg);
+  fclose(f);
+}
+
+void DumpRegisters(char *msg)
+{
+  FILE *f = fopen(logger->file_path, "a");
+  fprintf(f, "Dumping Registers.... \n");
+  fprintf(f, "\tRS1: %d\n\tRS2: %d\n\tRD: %d\n", registers->gpr[2], registers->gpr[3], registers->gpr[1]);
   fclose(f);
 }

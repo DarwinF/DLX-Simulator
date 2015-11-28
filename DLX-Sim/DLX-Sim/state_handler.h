@@ -22,6 +22,9 @@ typedef struct
 	WORD instruction;
   WORD data;
 
+  // Registers in use
+  HWORD reg_info;      // R: (Return Flag, rs1, rs2, rd) I: (Return Flag, rs1, rd, GARGBAGE) J: (GARBAGE)
+
 	// Function
   InstructionFunc function;
 

@@ -2,17 +2,31 @@
 #include "state_handler.h"
 
 // Bit Manipulation Constants
+#define             OPCODE_OFFSET         26
+#define             J_TYPE_MAX_OPCODE     3
+
+// WORD BASED MASKS
 #define             OPCODE_MASK           0xFC000000
 #define             R_OPCODE_MASK         0x0000003F
 #define             DATA_MASK             0x03FFFFFF
-#define             OPCODE_OFFSET         26
+#define             REGISTER_INFO_MASK    0x0000FFFF
+#define             OPCODE_INFO_MASK      0xFFFF0000
+#define             RS1_MASK_W            0x03E00000  // 0000 0011 1110 00....00
+#define             RS2_MASK_W            0x001F0000
+#define             RD_MASK_W             0x0000F800
+
+// HALF WORD BASED MASKS
+#define             RETURN_FLAG_HW        0x8000
+#define             RS1_MASK_HW           0x7C00  // 0111 1100 0000 0000
+#define             RS2_MASK_HW           0x03E0  // 0000 0011 1110 0000
+#define             RD_MASK_HW            0x001F  // 0000 0000 0001 1111
 
 // Function Declerations
 int InitializeState(State *);
 
 // Stage Functions
 WORD Fetch();
-HWORD DecodeOpcode(WORD);
+WORD DecodeInformation(WORD);
 WORD DecodeData(WORD);
 WORD Execute(InstructionFunc, WORD);
 void AccessMemory();
@@ -57,6 +71,8 @@ int DestroyState(State *s)
 
 void ProcessState(State *s)
 {
+  WORD response;
+
   switch (s->current_stage)
   {
   case INSTRUCTION_FETCH:
@@ -64,12 +80,16 @@ void ProcessState(State *s)
     s->current_stage = INSTRUCTION_DECODE;
     break;
   case INSTRUCTION_DECODE:
-    s->function = instruction_table[DecodeOpcode(s->instruction)];
+    response = DecodeInformation(s->instruction);
+
+    s->reg_info = response & REGISTER_INFO_MASK;
+    s->function = instruction_table[(response & OPCODE_INFO_MASK) >> 16];
+
     s->data = DecodeData(s->instruction);
     s->current_stage = INSTRUCTION_EXECUTE;
     break;
   case INSTRUCTION_EXECUTE:
-    s->return_value = Execute(s->function, s->data);
+    s->return_value = Execute(s->function, s->data, s->reg_info);
     s->current_stage = MEMORY_ACCESS;
     break;
   case MEMORY_ACCESS:
@@ -77,7 +97,7 @@ void ProcessState(State *s)
     s->current_stage = WRITE_BACK;
     break;
   case WRITE_BACK:
-    WriteBack(s->return_value);
+    WriteBack(s->return_value, s->reg_info);
     s->current_stage = INSTRUCTION_FETCH;
     break;
   }
@@ -93,22 +113,40 @@ WORD Fetch()
   return instruction;
 }
 
-HWORD DecodeOpcode(WORD i)
+WORD DecodeInformation(WORD i)
 {
-  HWORD opcode = 0;
+  WORD response = 0;
+  HWORD opcode = 0, registers = 0;
 
-  if (i & OPCODE_MASK)
-  {
+  if (i & OPCODE_MASK) {
     // I or J Type
     opcode = (i >> OPCODE_OFFSET);
+
+    if (opcode > J_TYPE_MAX_OPCODE)
+      registers = 1;
   }
-  else
-  {
+  else {
     // R Type
     opcode = i & R_OPCODE_MASK;
+
+    registers = 1;
   }
 
-  return opcode;
+  registers = registers << 5;
+
+  registers |= (i & RS1_MASK_W) >> 21;
+  registers = registers << 5;
+
+  registers |= (i & RS2_MASK_W) >> 16;
+  registers = registers << 5;
+
+  registers |= (i & RD_MASK_W) >> 11;
+
+  response = opcode;
+  response = response << 16;
+  response |= registers;
+
+  return response;
 }
 
 WORD DecodeData(WORD instruction)
@@ -116,9 +154,9 @@ WORD DecodeData(WORD instruction)
   return (instruction & DATA_MASK);
 }
 
-WORD Execute(InstructionFunc func, WORD data)
+WORD Execute(InstructionFunc func, WORD data, HWORD reg_info)
 {
-  return func(data);
+  return func(data, reg_info);
 }
 
 void AccessMemory()
@@ -126,7 +164,10 @@ void AccessMemory()
   
 }
 
-void WriteBack(WORD value)
+void WriteBack(WORD value, HWORD reg_info)
 {
-  
+  HWORD rd = reg_info & RD_MASK_HW;
+
+  if (reg_info & RETURN_FLAG_HW == RETURN_FLAG_HW)
+    registers->gpr[rd] = value;
 }

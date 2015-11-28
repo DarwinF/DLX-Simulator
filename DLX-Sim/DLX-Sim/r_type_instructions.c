@@ -1,24 +1,26 @@
 #include "r_type_instructions.h"
 
-#define RS1_SHIFT     21
-#define RS2_SHIFT     16
-#define RS2_MASK      0x0000001F
-#define RD_SHIFT      11  
+#define   RS1_MASK    0x7C00  // 0111 1100 0000 0000
+#define   RS2_MASK    0x03E0  // 0000 0011 1110 0000
+#define   RD_MASK     0x001F  // 0000 0000 0001 1111
 
-WORD add_instruction(WORD data)
+#define   RS1_OFFSET  10
+#define   RS2_OFFSET  5
+
+WORD add_instruction(WORD data, HWORD reg_info)
 {
   // Rd = Rs1 + Rs2
-  HWORD rs1 = (data >> RS1_SHIFT);
-  HWORD rs2 = (data >> RS2_SHIFT) & RS2_MASK;
+  HWORD rs1 = (reg_info & RS1_MASK) >> RS1_OFFSET;
+  HWORD rs2 = (reg_info & RS2_MASK) >> RS2_OFFSET;
 
   return registers->gpr[rs1] + registers->gpr[rs2];
 }
 
-WORD sub_instruction(WORD data)
+WORD sub_instruction(WORD data, HWORD reg_info)
 {
   // Rd = Rs1 - Rs2
-  HWORD rs1 = data >> RS1_SHIFT;
-  HWORD rs2 = data >> RS2_SHIFT;
+  HWORD rs1 = (reg_info & RS1_MASK) >> RS1_OFFSET;
+  HWORD rs2 = (reg_info & RS2_MASK) >> RS2_OFFSET;
 
   return registers->gpr[rs1] - registers->gpr[rs2];
 }
