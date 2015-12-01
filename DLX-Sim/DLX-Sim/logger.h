@@ -4,7 +4,7 @@
 #include "dlx_sim.h"
 
 // Logging Functions
-typedef (*Logging)(char *);
+typedef void (*Logging)(char *);
 
 // Logger Struct
 typedef struct

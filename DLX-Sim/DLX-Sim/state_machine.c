@@ -6,6 +6,7 @@
 int InitializeStateMachine(StateMachine*);
 
 Registers *registers;
+Memory *memory;
 
 StateMachine* CreateStateMachine()
 {
@@ -40,13 +41,18 @@ int InitializeStateMachine(StateMachine* sm)
   State* current_state = CreateState();
   // Setup Registers
   Registers* current_registers = CreateRegisters();
+  // Setup Memory
+  Memory* current_memory = CreateMemory();
 
-  if (current_state == NULL || current_registers == NULL)
+  if (current_state == NULL || current_registers == NULL || current_memory == NULL)
     status = SM_GENERAL_INIT_ERROR;
   else
   {
+    memory = current_memory;
     registers = current_registers;
     sm->state = current_state;
+
+    program_counter = 0;
   }
 
   return status;
@@ -72,7 +78,7 @@ void RunStateMachine(StateMachine* sm)
   // Loop
   while (cycle_counter < 1000000) // Temporary
   {
-    ProcessState(sm->state);
+    program_counter += ProcessState(sm->state, program_counter);
 
     cycle_counter++;
   }

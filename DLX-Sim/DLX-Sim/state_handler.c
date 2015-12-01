@@ -25,7 +25,7 @@
 int InitializeState(State *);
 
 // Stage Functions
-WORD Fetch();
+WORD Fetch(DWORD);
 WORD DecodeInformation(WORD);
 WORD DecodeData(WORD);
 WORD Execute(InstructionFunc, WORD);
@@ -69,15 +69,17 @@ int DestroyState(State *s)
   return STATE_SUCCESS;
 }
 
-void ProcessState(State *s)
+DWORD ProcessState(State *s, DWORD pc)
 {
   WORD response;
+  DWORD new_pc = pc;
 
   switch (s->current_stage)
   {
   case INSTRUCTION_FETCH:
-    s->instruction = Fetch();
+    s->instruction = Fetch(pc);
     s->current_stage = INSTRUCTION_DECODE;
+    new_pc += 4;
     break;
   case INSTRUCTION_DECODE:
     response = DecodeInformation(s->instruction);
@@ -101,14 +103,13 @@ void ProcessState(State *s)
     s->current_stage = INSTRUCTION_FETCH;
     break;
   }
+
+  return new_pc;
 }
 
-WORD Fetch()
+WORD Fetch(DWORD pc)
 {
-  // ADD r1,r2,r3 (rd, rs1, rs2)
-  registers->gpr[2] = 10;
-  registers->gpr[3] = 11;
-  WORD instruction = 0b00000000010000110000100000100000;
+  WORD instruction = memory->mem[pc];
 
   return instruction;
 }

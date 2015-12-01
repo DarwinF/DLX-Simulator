@@ -3,6 +3,7 @@
 
 #include "dlx_sim.h"
 #include "instruction_handler.h"
+#include "memory_handler.h"
 
 typedef enum
 {
@@ -38,6 +39,6 @@ typedef struct
 // Function Declerations
 State* CreateState();
 int DestroyState(State *);
-void ProcessState(State *);
+DWORD ProcessState(State *, DWORD);
 
 #endif

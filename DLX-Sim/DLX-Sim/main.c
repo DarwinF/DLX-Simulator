@@ -1,6 +1,6 @@
 #include "state_machine.h"
 
-int main(void)
+int main(int argc, char *argv[])
 {
   // Exit if the logger can't be created
   int logger_status = CreateLogger(NULL);

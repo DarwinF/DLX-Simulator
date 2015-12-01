@@ -19,8 +19,14 @@
 // Logger Errors
 #define LOGGER_INITALIZED          1
 #define LOGGER_SUCCESS             0
-#define LOGGER_GENER_INIT_ERROR   -1
+#define LOGGER_GENERAL_INIT_ERROR -1
 #define LOGGER_NO_MEMORY_ERROR    -2
 #define LOGGER_FILE_PATH_ERROR    -3
+
+// Memory Errors
+#define MEMORY_INITIALIZED         1
+#define MEMORY_SUCCESS             0
+#define MEMORY_GENERAL_INIT_ERROR -1
+#define MEMORY_NO_MEMORY_ERROR    -2
 
 #endif

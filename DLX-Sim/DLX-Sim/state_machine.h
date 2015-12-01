@@ -5,6 +5,7 @@
 
 #include "state_handler.h"
 #include "register_file_handler.h"
+#include "memory_handler.h"
 
 typedef struct
 {
@@ -14,6 +15,8 @@ typedef struct
   // States
   State *state;
 }StateMachine;
+
+DWORD program_counter;
 
 // Function Declerations
 StateMachine* CreateStateMachine();
