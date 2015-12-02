@@ -52,6 +52,8 @@ int InitializeStateMachine(StateMachine* sm)
     registers = current_registers;
     sm->state = current_state;
 
+    WriteFileToMemory();
+
     program_counter = 0;
   }
 
@@ -75,10 +77,14 @@ void RunStateMachine(StateMachine* sm)
   // Setup
   DWORD cycle_counter = 0;
 
+  // DIRTY TEMPORARY SOLUTION
+  registers->gpr[1] = 3;
+  registers->gpr[2] = 123;
+
   // Loop
   while (cycle_counter < 1000000) // Temporary
   {
-    program_counter += ProcessState(sm->state, program_counter);
+    program_counter = ProcessState(sm->state, program_counter);
 
     cycle_counter++;
   }

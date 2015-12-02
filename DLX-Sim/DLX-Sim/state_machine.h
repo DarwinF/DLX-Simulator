@@ -6,6 +6,7 @@
 #include "state_handler.h"
 #include "register_file_handler.h"
 #include "memory_handler.h"
+#include "file_handler.h"
 
 typedef struct
 {

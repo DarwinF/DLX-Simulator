@@ -12,14 +12,14 @@
 typedef WORD(*InstructionFunc)(WORD, HWORD);
 
 static InstructionFunc instruction_table[] = {
-  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, //  0-5
-  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, //  6-11
-  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, // 12-17
-  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, // 18-23
-  nop_instruction, nop_instruction, nop_instruction, nop_instruction, sub_instruction, nop_instruction, // 24-29
-  nop_instruction, nop_instruction, add_instruction, nop_instruction, nop_instruction, nop_instruction, // 30-35
-  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, // 36-41
-  nop_instruction, nop_instruction, nop_instruction                                                     // 42-45
+  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction,     //  0-5
+  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction,     //  6-11
+  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction,     // 12-17
+  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction,     // 18-23
+  nop_instruction, nop_instruction, nop_instruction, nop_instruction, sub_instruction, nop_instruction,     // 24-29
+  nop_instruction, nop_instruction, add_instruction, nop_instruction, nop_instruction, get_memory_address,  // 30-35
+  nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction,     // 36-41
+  nop_instruction, get_memory_address, nop_instruction                                                      // 42-44
 };
 
 #endif

@@ -21,6 +21,9 @@
 #define             RS2_MASK_HW           0x03E0  // 0000 0011 1110 0000
 #define             RD_MASK_HW            0x001F  // 0000 0000 0001 1111
 
+#define             SW_OPCODE             0x2b
+#define             LW_OPCODE             0x23
+
 // Function Declerations
 int InitializeState(State *);
 
@@ -29,7 +32,7 @@ WORD Fetch(DWORD);
 WORD DecodeInformation(WORD);
 WORD DecodeData(WORD);
 WORD Execute(InstructionFunc, WORD);
-void AccessMemory();
+WORD AccessMemory(WORD, WORD, WORD);
 void WriteBack(WORD);
 
 State* CreateState()
@@ -73,13 +76,14 @@ DWORD ProcessState(State *s, DWORD pc)
 {
   WORD response;
   DWORD new_pc = pc;
+  WORD location;
 
   switch (s->current_stage)
   {
   case INSTRUCTION_FETCH:
     s->instruction = Fetch(pc);
     s->current_stage = INSTRUCTION_DECODE;
-    new_pc += 4;
+    new_pc++;
     break;
   case INSTRUCTION_DECODE:
     response = DecodeInformation(s->instruction);
@@ -95,7 +99,7 @@ DWORD ProcessState(State *s, DWORD pc)
     s->current_stage = MEMORY_ACCESS;
     break;
   case MEMORY_ACCESS:
-    AccessMemory();
+    s->return_value = AccessMemory(s->return_value, s->instruction, s->reg_info);
     s->current_stage = WRITE_BACK;
     break;
   case WRITE_BACK:
@@ -123,25 +127,33 @@ WORD DecodeInformation(WORD i)
     // I or J Type
     opcode = (i >> OPCODE_OFFSET);
 
-    if (opcode > J_TYPE_MAX_OPCODE)
+    if (opcode > J_TYPE_MAX_OPCODE && opcode != SW_OPCODE) {
       registers = 1;
+    }
+    registers = registers << 5;
+
+    registers |= (i & RS1_MASK_W) >> 21;
+    registers = registers << 5;
+
+    registers |= (i & RS2_MASK_W) >> 16;
+    registers = registers << 5;
+
+    registers |= (i & RS2_MASK_W) >> 16;
   }
   else {
     // R Type
     opcode = i & R_OPCODE_MASK;
-
     registers = 1;
+    registers = registers << 5;
+
+    registers |= (i & RS1_MASK_W) >> 21;
+    registers = registers << 5;
+
+    registers |= (i & RS2_MASK_W) >> 16;
+    registers = registers << 5;
+
+    registers |= (i & RD_MASK_W) >> 11;
   }
-
-  registers = registers << 5;
-
-  registers |= (i & RS1_MASK_W) >> 21;
-  registers = registers << 5;
-
-  registers |= (i & RS2_MASK_W) >> 16;
-  registers = registers << 5;
-
-  registers |= (i & RD_MASK_W) >> 11;
 
   response = opcode;
   response = response << 16;
@@ -160,9 +172,24 @@ WORD Execute(InstructionFunc func, WORD data, HWORD reg_info)
   return func(data, reg_info);
 }
 
-void AccessMemory()
+WORD AccessMemory(WORD location, WORD instruction, HWORD reg_info)
 {
-  
+  WORD memory_value = 0;
+  WORD rd = 0;
+
+  if (((instruction & OPCODE_MASK) >> 26) == LW_OPCODE)
+  {
+    // LW: Rd = MEM[Rs1 + extend(immediate)]
+    memory_value = memory->mem[location];
+  }
+  else if (((instruction & OPCODE_MASK) >> 26) == SW_OPCODE)
+  {
+    // SW: MEM[Rs1 + extend(immediate)] = Rd  
+    rd = (reg_info & RS2_MASK_HW) >> 5;
+    memory->mem[location] = registers->gpr[rd];
+  }
+
+  return memory_value;
 }
 
 void WriteBack(WORD value, HWORD reg_info)
