@@ -9,7 +9,7 @@
 #include "custom_instructions.h"
 
 // Function Pointer for Instructions
-typedef WORD(*InstructionFunc)(WORD, HWORD);
+typedef WORD(*InstructionFunc)(HWORD);
 
 static InstructionFunc instruction_table[] = {
   nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, nop_instruction, //  0-5

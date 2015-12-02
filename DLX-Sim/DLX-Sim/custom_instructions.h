@@ -4,6 +4,6 @@
 #include "dlx_sim.h"
 
 // Instructions
-WORD nop_instruction(WORD, HWORD);
+WORD nop_instruction(HWORD);
 
 #endif

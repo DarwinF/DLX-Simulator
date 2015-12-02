@@ -5,7 +5,7 @@
 #include "register_file_handler.h"
 
 // Instructions
-WORD add_instruction(WORD, HWORD);
-WORD sub_instruction(WORD, HWORD);
+WORD add_instruction(HWORD);
+WORD sub_instruction(HWORD);
 
 #endif

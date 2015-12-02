@@ -7,7 +7,7 @@
 #define   RS1_OFFSET  10
 #define   RS2_OFFSET  5
 
-WORD add_instruction(WORD data, HWORD reg_info)
+WORD add_instruction(HWORD reg_info)
 {
   // Rd = Rs1 + Rs2
   HWORD rs1 = (reg_info & RS1_MASK) >> RS1_OFFSET;
@@ -16,7 +16,7 @@ WORD add_instruction(WORD data, HWORD reg_info)
   return registers->gpr[rs1] + registers->gpr[rs2];
 }
 
-WORD sub_instruction(WORD data, HWORD reg_info)
+WORD sub_instruction(HWORD reg_info)
 {
   // Rd = Rs1 - Rs2
   HWORD rs1 = (reg_info & RS1_MASK) >> RS1_OFFSET;
