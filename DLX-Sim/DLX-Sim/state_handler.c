@@ -8,6 +8,7 @@
 // WORD BASED MASKS
 #define             OPCODE_MASK           0xFC000000
 #define             R_OPCODE_MASK         0x0000003F
+#define             DATA_MASK             0x03FFFFFF
 #define             REGISTER_INFO_MASK    0x0000FFFF
 #define             OPCODE_INFO_MASK      0xFFFF0000
 #define             RS1_MASK_W            0x03E00000  // 0000 0011 1110 00....00
@@ -25,7 +26,8 @@ int InitializeState(State *);
 
 // Stage Functions
 WORD Fetch(DWORD);
-WORD Decode(WORD);
+WORD DecodeInformation(WORD);
+WORD DecodeData(WORD);
 WORD Execute(InstructionFunc, WORD);
 void AccessMemory();
 void WriteBack(WORD);
@@ -80,10 +82,12 @@ DWORD ProcessState(State *s, DWORD pc)
     new_pc += 4;
     break;
   case INSTRUCTION_DECODE:
-    response = Decode(s->instruction);
+    response = DecodeInformation(s->instruction);
 
     s->reg_info = response & REGISTER_INFO_MASK;
     s->function = instruction_table[(response & OPCODE_INFO_MASK) >> 16];
+
+    s->data = DecodeData(s->instruction);
     s->current_stage = INSTRUCTION_EXECUTE;
     break;
   case INSTRUCTION_EXECUTE:
@@ -110,7 +114,7 @@ WORD Fetch(DWORD pc)
   return instruction;
 }
 
-WORD Decode(WORD i)
+WORD DecodeInformation(WORD i)
 {
   WORD response = 0;
   HWORD opcode = 0, registers = 0;
@@ -146,6 +150,11 @@ WORD Decode(WORD i)
   return response;
 }
 
+WORD DecodeData(WORD instruction)
+{
+  return (instruction & DATA_MASK);
+}
+
 WORD Execute(InstructionFunc func, WORD data, HWORD reg_info)
 {
   return func(data, reg_info);
@@ -153,8 +162,7 @@ WORD Execute(InstructionFunc func, WORD data, HWORD reg_info)
 
 void AccessMemory()
 {
-  // LW: Rd = MEM[Rs1 + extend(immediate)]
-  // SW: MEM[Rs1 + extend(immediate)] = Rd
+  
 }
 
 void WriteBack(WORD value, HWORD reg_info)
