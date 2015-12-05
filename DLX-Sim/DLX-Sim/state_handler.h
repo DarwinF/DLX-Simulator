@@ -3,7 +3,6 @@
 
 #include "dlx_sim.h"
 #include "instruction_handler.h"
-#include "memory_handler.h"
 
 typedef enum
 {

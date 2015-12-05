@@ -54,7 +54,7 @@ int InitializeStateMachine(StateMachine* sm)
 
     WriteFileToMemory();
 
-    program_counter = 0;
+    registers->program_counter = 0;
   }
 
   return status;
@@ -84,7 +84,7 @@ void RunStateMachine(StateMachine* sm)
   // Loop
   while (cycle_counter < 1000000) // Temporary
   {
-    program_counter = ProcessState(sm->state, program_counter);
+    registers->program_counter = ProcessState(sm->state, registers->program_counter);
 
     cycle_counter++;
   }

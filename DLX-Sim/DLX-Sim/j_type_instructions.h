@@ -4,5 +4,7 @@
 #include "dlx_sim.h"
 
 // Instructions
+WORD   j_instruction(WORD, HWORD);
+WORD jal_instruction(WORD, HWORD);
 
 #endif

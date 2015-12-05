@@ -17,8 +17,6 @@ typedef struct
   State *state;
 }StateMachine;
 
-DWORD program_counter;
-
 // Function Declerations
 StateMachine* CreateStateMachine();
 int DestroyStateMachine(StateMachine *);

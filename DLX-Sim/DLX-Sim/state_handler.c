@@ -1,5 +1,5 @@
-#include "dlx_sim.h"
 #include "state_handler.h"
+#include "memory_handler.h"
 
 // Bit Manipulation Constants
 #define             OPCODE_OFFSET         26
@@ -31,9 +31,10 @@ int InitializeState(State *);
 WORD Fetch(DWORD);
 WORD DecodeInformation(WORD);
 WORD DecodeData(WORD);
-WORD Execute(InstructionFunc, WORD);
+WORD Execute(InstructionFunc, WORD, HWORD);
 WORD AccessMemory(WORD, WORD, WORD);
-void WriteBack(WORD);
+void WriteBack(WORD, HWORD, WORD);
+void SaveValue(WORD, HWORD, HWORD);
 
 State* CreateState()
 {
@@ -89,7 +90,10 @@ DWORD ProcessState(State *s, DWORD pc)
     response = DecodeInformation(s->instruction);
 
     s->reg_info = response & REGISTER_INFO_MASK;
-    s->function = instruction_table[(response & OPCODE_INFO_MASK) >> 16];
+    if ((s->instruction & OPCODE_MASK) >> OPCODE_OFFSET == 0)
+      s->function = r_type_instructions[(response & OPCODE_INFO_MASK) >> 16];
+    else
+      s->function = ij_type_instructions[(response & OPCODE_INFO_MASK) >> 16];
 
     s->data = DecodeData(s->instruction);
     s->current_stage = INSTRUCTION_EXECUTE;
@@ -103,7 +107,7 @@ DWORD ProcessState(State *s, DWORD pc)
     s->current_stage = WRITE_BACK;
     break;
   case WRITE_BACK:
-    WriteBack(s->return_value, s->reg_info);
+    WriteBack(s->return_value, s->reg_info, s->instruction);
     s->current_stage = INSTRUCTION_FETCH;
     break;
   }
@@ -127,9 +131,9 @@ WORD DecodeInformation(WORD i)
     // I or J Type
     opcode = (i >> OPCODE_OFFSET);
 
-    if (opcode > J_TYPE_MAX_OPCODE && opcode != SW_OPCODE) {
+    if (opcode != SW_OPCODE)
       registers = 1;
-    }
+
     registers = registers << 5;
 
     registers |= (i & RS1_MASK_W) >> 21;
@@ -177,12 +181,12 @@ WORD AccessMemory(WORD location, WORD instruction, HWORD reg_info)
   WORD memory_value = 0;
   WORD rd = 0;
 
-  if (((instruction & OPCODE_MASK) >> 26) == LW_OPCODE)
+  if (((instruction & OPCODE_MASK) >> OPCODE_OFFSET) == LW_OPCODE)
   {
     // LW: Rd = MEM[Rs1 + extend(immediate)]
     memory_value = memory->mem[location];
   }
-  else if (((instruction & OPCODE_MASK) >> 26) == SW_OPCODE)
+  else if (((instruction & OPCODE_MASK) >> OPCODE_OFFSET) == SW_OPCODE)
   {
     // SW: MEM[Rs1 + extend(immediate)] = Rd  
     rd = (reg_info & RS2_MASK_HW) >> 5;
@@ -192,10 +196,33 @@ WORD AccessMemory(WORD location, WORD instruction, HWORD reg_info)
   return memory_value;
 }
 
-void WriteBack(WORD value, HWORD reg_info)
+void WriteBack(WORD value, HWORD reg_info, WORD instruction)
 {
+  HWORD opcode = ((instruction & OPCODE_MASK) >> OPCODE_OFFSET);
   HWORD rd = reg_info & RD_MASK_HW;
 
+  switch (opcode)
+  {
+  case 3:
+    registers->gpr[31] = registers->program_counter + 1;
+  case 2:
+  case 4:
+  case 5:
+    registers->program_counter += value;
+    break;
+  case 19:
+    registers->gpr[31] = registers->program_counter + 1;
+  case 18:
+    registers->program_counter += value;
+    break;
+  default:
+    SaveValue(value, reg_info, rd);
+    break;
+  }
+}
+
+void SaveValue(WORD value, HWORD reg_info, HWORD dest)
+{
   if (reg_info & RETURN_FLAG_HW == RETURN_FLAG_HW)
-    registers->gpr[rd] = value;
+    registers->gpr[dest] = value;
 }

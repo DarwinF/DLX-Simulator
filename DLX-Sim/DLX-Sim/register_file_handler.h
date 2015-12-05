@@ -9,6 +9,7 @@ typedef struct
   WORD gpr[32];
 	// 32 Floating Point Registers
   WORD fpr[32];
+  DWORD program_counter;
 }Registers;
 
 extern Registers* registers;

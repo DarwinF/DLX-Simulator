@@ -7,11 +7,16 @@
 #define   RS1_OFFSET  10
 #define   RS2_OFFSET  5
 
+HWORD extract_register(HWORD mask, HWORD offset, HWORD reg_info)
+{
+  return (reg_info & mask) >> offset;
+}
+
 WORD add_instruction(WORD data, HWORD reg_info)
 {
   // Rd = Rs1 + Rs2
-  HWORD rs1 = (reg_info & RS1_MASK) >> RS1_OFFSET;
-  HWORD rs2 = (reg_info & RS2_MASK) >> RS2_OFFSET;
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
 
   return registers->gpr[rs1] + registers->gpr[rs2];
 }
@@ -19,8 +24,108 @@ WORD add_instruction(WORD data, HWORD reg_info)
 WORD sub_instruction(WORD data, HWORD reg_info)
 {
   // Rd = Rs1 - Rs2
-  HWORD rs1 = (reg_info & RS1_MASK) >> RS1_OFFSET;
-  HWORD rs2 = (reg_info & RS2_MASK) >> RS2_OFFSET;
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
 
   return registers->gpr[rs1] - registers->gpr[rs2];
+}
+
+WORD sll_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = Rs1 << (Rs2 % 8)
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  return (registers->gpr[rs1] << (registers->gpr[rs2] % 8));
+}
+
+WORD srl_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = Rs1 >> (Rs2 % 8)
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  return (registers->gpr[rs1] >> (registers->gpr[rs2] % 8));
+}
+
+WORD sra_instruction(WORD data, HWORD reg_info)
+{
+  return srl_instruction(data, reg_info);
+}
+
+
+WORD and_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = Rs1 & Rs2
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  return registers->gpr[rs1] & registers->gpr[rs2];
+}
+
+WORD  or_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = Rs1 | Rs2
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  return registers->gpr[rs1] | registers->gpr[rs2];
+}
+
+WORD xor_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = Rs1 ^ Rs2
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  return registers->gpr[rs1] ^ registers->gpr[rs2];
+}
+
+WORD seq_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = (Rs1 == Rs2) ? 1 : 0
+
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  if (registers->gpr[rs1] == registers->gpr[rs2])
+    return 1;
+  else
+    return 0;
+}
+
+WORD sne_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = (Rs1 != Rs2) ? 1 : 0
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  if (registers->gpr[rs1] == registers->gpr[rs2])
+    return 0;
+  else
+    return 1;
+}
+
+WORD slt_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = (Rs1 < Rs2) ? 1 : 0
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  if (registers->gpr[rs1] < registers->gpr[rs2])
+    return 1;
+  else
+    return 0;
+}
+
+WORD sle_instruction(WORD data, HWORD reg_info)
+{
+  // Rd = (Rs1 <= Rs2) ? 1 : 0
+  HWORD rs1 = extract_register(RS1_MASK, RS1_OFFSET, reg_info);
+  HWORD rs2 = extract_register(RS2_MASK, RS2_OFFSET, reg_info);
+
+  if (registers->gpr[rs1] <= registers->gpr[rs2])
+    return 1;
+  else
+    return 0;
 }
