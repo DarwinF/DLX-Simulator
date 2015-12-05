@@ -38,6 +38,6 @@ typedef struct
 // Function Declerations
 State* CreateState();
 int DestroyState(State *);
-DWORD ProcessState(State *, DWORD);
+WORD ProcessState(State *, WORD);
 
 #endif

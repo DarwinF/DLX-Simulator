@@ -1,6 +1,8 @@
 #include <stdlib.h>
 
 #include "state_machine.h"
+#include "memory_handler.h"
+#include "file_handler.h"
 
 // Function Declerations
 int InitializeStateMachine(StateMachine*);

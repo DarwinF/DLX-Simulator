@@ -32,7 +32,7 @@ WORD Fetch(DWORD);
 WORD DecodeInformation(WORD);
 WORD DecodeData(WORD);
 WORD Execute(InstructionFunc, WORD, HWORD);
-WORD AccessMemory(WORD, WORD, WORD);
+WORD AccessMemory(WORD, WORD, HWORD);
 void WriteBack(WORD, HWORD, WORD);
 void SaveValue(WORD, HWORD, HWORD);
 
@@ -73,11 +73,10 @@ int DestroyState(State *s)
   return STATE_SUCCESS;
 }
 
-DWORD ProcessState(State *s, DWORD pc)
+WORD ProcessState(State *s, WORD pc)
 {
   WORD response;
-  DWORD new_pc = pc;
-  WORD location;
+  WORD new_pc = pc;
 
   switch (s->current_stage)
   {
@@ -223,6 +222,6 @@ void WriteBack(WORD value, HWORD reg_info, WORD instruction)
 
 void SaveValue(WORD value, HWORD reg_info, HWORD dest)
 {
-  if (reg_info & RETURN_FLAG_HW == RETURN_FLAG_HW)
+  if ((reg_info & RETURN_FLAG_HW) == RETURN_FLAG_HW)
     registers->gpr[dest] = value;
 }

@@ -3,7 +3,7 @@
 Memory *CreateMemory()
 {
   int status = MEMORY_SUCCESS;
-  char *msg[128];
+  char msg[128];
   Memory *m = (Memory *)malloc(sizeof(Memory));
 
   if (m == NULL)
