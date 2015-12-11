@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,6 +25,7 @@ namespace DLX_Editor
     public interpreter(List<string> lines)
     {
       assembly_lines = lines;
+      binary_lines = new List<uint>();
     }
 
     // Converts assembly lines to binary
@@ -46,7 +48,7 @@ namespace DLX_Editor
     {
       int success = 0;
 
-      if (line[0] == '/' || line[0] == '\n')
+      if (line == "" || line[0] == '/' || line[0] == '\n')
         success = 1;
       else
         success = ConvertBinary(line);
@@ -57,14 +59,24 @@ namespace DLX_Editor
     private int ConvertBinary(string line)
     {
       int success = 0;
-      string new_line = line.ToLower();
 
-      string[] split = Regex.Split(new_line, @"\s+");
+      string opcode = Regex.Split(line.ToLower(), @"\s+")[0];
+      string arguments = Regex.Replace(line.Replace(opcode, ""), @"\s+", "");
 
-      UInt32 instruction = c.opcodes[split[0]];
-      instruction <<= 26;
-      
-      instruction |= ProcessArguments(line.Replace(split[0], ""));
+      UInt32 instruction = 0;
+      UInt32 op = GetOpcode(opcode);
+      UInt32 args = ProcessArguments(arguments);
+
+      if (op == 0)
+      {
+        instruction |= args;
+        instruction |= GetFuncCode(opcode);
+      }
+      else
+      {
+        instruction |= (op << 26);
+        instruction |= args;
+      }
 
       binary_lines.Add(instruction);
 
@@ -73,14 +85,58 @@ namespace DLX_Editor
 
     private UInt32 ProcessArguments(string line)
     {
-      StringSplitOptions opts = StringSplitOptions.RemoveEmptyEntries;
-      char[] seperators = new char[1];
-      seperators[0] = ',';
+      string trimmed = Regex.Replace(line, @"\s+", "");
+      string[] args = Regex.Split(trimmed, ",");
 
-      string args_nws = Regex.Replace(line, @"\s+", "");
-      string[] args = args_nws.Split(seperators, opts);
+      UInt32 destination = 0;
+      UInt32 source_one = 0;
+      UInt32 source_two = 0;
+      UInt32 response = 0;
 
-      return 0;
+      if (args.Length == 1)
+        return GetValue(args[0]);
+
+      source_one = GetRegister(args[1].Substring(1));
+      destination = GetRegister(args[0].Substring(1));
+
+      response = source_one << 21;
+
+      // R-Type Instruction
+      if (args[2][0] == 'r')
+      {
+        source_two = GetRegister(args[2].Substring(1));
+        response |= (source_two << 16);
+        response |= (destination << 11);
+      }
+      // I-Type Instruction
+      else
+      {
+        source_two = GetValue(args[2]);
+        response |= (destination << 16);
+        response |= source_two;
+      }
+
+      return response;
+    }
+
+    private UInt32 GetOpcode(string opcode)
+    {
+      return c.opcodes[opcode];
+    }
+
+    private UInt32 GetFuncCode(string func_code)
+    {
+      return c.func_codes[func_code];
+    }
+
+    private UInt32 GetRegister(string register)
+    {
+      return UInt32.Parse(register);
+    }
+
+    private UInt32 GetValue(string value)
+    {
+      return UInt32.Parse(value);
     }
   }
 }

@@ -23,6 +23,7 @@ namespace DLX_Editor
 
       interpreter i = new interpreter(lines);
       i.ConvertASMtoBIN();
+      fh.WriteFile("../../binary", i.BinaryLines);
     }
   }
 }

@@ -11,7 +11,7 @@ namespace DLX_Editor
   {
     private string file_location;
     private StreamReader file_reader;
-    private StreamWriter file_writer;
+    private BinaryWriter file_writer;
 
     public file_handler(string path)
     {
@@ -34,7 +34,7 @@ namespace DLX_Editor
 
     public void WriteFile(string path, List<UInt32> instructions)
     {
-      file_writer = new StreamWriter(path);
+      file_writer = new BinaryWriter(File.Open(path, FileMode.Create));
 
       foreach (UInt32 i in instructions)
         file_writer.Write(i);

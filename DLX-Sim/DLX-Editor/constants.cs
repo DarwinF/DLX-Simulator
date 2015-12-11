@@ -16,5 +16,11 @@ namespace DLX_Editor
       {"sll", 0x00 }, {"srl", 0x00}, {"sra", 0x00}, {"add", 0x00}, {"sub", 0x00}, {"and", 0x00}, {"or", 0x00},
       {"xor", 0x00 }, {"seq", 0x00 }, {"sne", 0x00 }, {"slt", 0x00 }, {"sle", 0x00 }
     };
+
+    public Dictionary<string, UInt32> func_codes = new Dictionary<string, uint>()
+    {
+      {"sll", 0x04 }, {"srl", 0x06}, {"sra", 0x07}, {"add", 0x20}, {"sub", 0x22}, {"and", 0x24}, {"or", 0x25},
+      {"xor", 0x26 }, {"seq", 0x28 }, {"sne", 0x29 }, {"slt", 0x2a }, {"sle", 0x2c }
+    }; 
   }
 }
