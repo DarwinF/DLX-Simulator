@@ -191,6 +191,11 @@ WORD AccessMemory(WORD location, WORD instruction, HWORD reg_info)
     rd = (reg_info & RS2_MASK_HW) >> 5;
     memory->mem[location] = registers->gpr[rd];
   }
+  else 
+  {
+    // Location is return_value
+    memory_value = location; 
+  }
 
   return memory_value;
 }

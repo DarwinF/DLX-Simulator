@@ -39,6 +39,10 @@ namespace DLX_Editor
       foreach (UInt32 i in instructions)
         file_writer.Write(i);
 
+      // Print end symbol
+      UInt32 end = 0x00;
+      file_writer.Write(end);
+
       file_writer.Close();
     }
   }

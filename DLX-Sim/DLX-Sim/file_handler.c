@@ -2,6 +2,17 @@
 
 void WriteFileToMemory()
 {
-  memory->mem[0] = 0b10101100001000100000000000000000;
-  memory->mem[1] = 0b10001100001000110000000000000000;
+  FILE *source_file = fopen("binary", "rb");
+
+  // Open our binary file
+  // Read 4 bytes (1 WORD) at a time until EOF
+  WORD instruction = 0, counter = 0;
+  fread(&instruction, 4, 1, source_file);
+
+  while (instruction != 0x00) {
+    memory->mem[counter++] = instruction;
+    fread(&instruction, 4, 1, source_file);
+  }
+
+  fclose(source_file);
 }
